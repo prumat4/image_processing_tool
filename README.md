@@ -1,5 +1,14 @@
 # image_processing_tool
 
+# To do: 
+- [ ] fix cmake config and adjust readme
+- [ ] 
+- [ ] 
+- [ ] 
+- [ ] 
+
+
+
 # Project setup:
 Note: steps [2 - n] can be performed using setup.sh
 1. install cuda: https://developer.nvidia.com/cuda-downloads
@@ -22,3 +31,4 @@ libatlas-base-dev gfortran python3-dev python3-numpy libtbb2 libtbb-dev libdc139
 ```bash
 sudo apt-get install -y libopencv-dev
 ```
+

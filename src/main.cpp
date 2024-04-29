@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     std::cout << "Attempting to open image at: " << argv[1] << std::endl;
 
     cv::Mat input_image = cv::imread(argv[1], cv::IMREAD_COLOR);
-    if (inputImage.empty()) {
+    if (input_image.empty()) {
         std::cerr << "Error: Image not found or unable to open\n";
         return 1;
     }

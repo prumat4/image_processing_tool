@@ -1,2 +1,7 @@
 /build
 /.vscode/
+
+assets/*
+!assets/*.jpg
+!assets/**
+assets/**/*

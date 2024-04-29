@@ -2,11 +2,10 @@
 
 # To do: 
 - [ ] fix cmake config and adjust readme
+- [ ] create diagrams with comparison of performance both for CPU and GPU
+- [ ] write some unit tests and make them auto run in the github
 - [ ] 
 - [ ] 
-- [ ] 
-- [ ] 
-
 
 
 # Project setup:

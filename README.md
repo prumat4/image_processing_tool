@@ -31,3 +31,7 @@ libatlas-base-dev gfortran python3-dev python3-numpy libtbb2 libtbb-dev libdc139
 sudo apt-get install -y libopencv-dev
 ```
 
+
+# Links: 
+1. CUDA docs: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#
+2. OpenCV docs: https://docs.opencv.org/4.x/d1/dfb/intro.html

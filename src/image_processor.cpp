@@ -20,39 +20,40 @@ void ImageProcessor::displayImage(const std::string& _name) const {
     cv::waitKey(0);
 }
 
-void ImageProcessor::processAllImagesInDirectory(const std::string& directoryPath) {
-    for (const auto& entry : std::filesystem::directory_iterator(directoryPath)) {
-        if (entry.is_regular_file() && isImageFile(entry.path().filename().string())) {
-            makeGreyscaleAndSave(entry.path().string());
-        }
-    }
-}
+// void ImageProcessor::processAllImagesInDirectory(const std::string& directoryPath) {
+//     for (const auto& entry : std::filesystem::directory_iterator(directoryPath)) {
+//         if (entry.is_regular_file() && isImageFile(entry.path().filename().string())) {
+//             makeGreyscaleAndSave(entry.path().string());
+//         }
+//     }
+// }
 
-void ImageProcessor::makeGreyscaleAndSave(const std::string& inputPath) {
-    cv::Mat image = cv::imread(inputPath, cv::IMREAD_COLOR);
-    if (image.empty()) {
-        std::cerr << "Failed to load the image from: " << inputPath << std::endl;
-        return;
-    }
+// bool ImageProcessor::isImageFile(const std::string& filename) {
+//     std::vector<std::string> extensions = { ".png", ".jpg", ".jpeg", ".bmp" };
+//     std::filesystem::path filePath(filename);
+//     return std::find(extensions.begin(), extensions.end(), filePath.extension().string()) != extensions.end();
+// }
 
-    cv::Mat newImage;
-    cv::cvtColor(image, newImage, cv::COLOR_BGR2GRAY);
+// this takes file path as argument
+// void ImageProcessor::makeGreyscaleAndSave(const std::string& inputPath) {
+//     cv::Mat image = cv::imread(inputPath, cv::IMREAD_COLOR);
+//     if (image.empty()) {
+//         std::cerr << "Failed to load the image from: " << inputPath << std::endl;
+//         return;
+//     }
 
-    std::filesystem::path outputPath = std::filesystem::path(inputPath).parent_path() / "greyscale";
-    std::filesystem::create_directories(outputPath);
+//     cv::Mat newImage;
+//     cv::cvtColor(image, newImage, cv::COLOR_BGR2GRAY);
 
-    std::string outputFileName = std::filesystem::path(inputPath).stem().string() + "_grayscale.jpg";
-    std::string fullOutputPath = outputPath / outputFileName;
+//     std::filesystem::path outputPath = std::filesystem::path(inputPath).parent_path() / "greyscale";
+//     std::filesystem::create_directories(outputPath);
 
-    if (!cv::imwrite(fullOutputPath, newImage)) {
-        std::cerr << "Failed to save the grayscale image to: " << fullOutputPath << std::endl;
-    } else {
-        std::cout << "Grayscale image saved to: " << fullOutputPath << std::endl;
-    }
-}
+//     std::string outputFileName = std::filesystem::path(inputPath).stem().string() + "_grayscale.jpg";
+//     std::string fullOutputPath = outputPath / outputFileName;
 
-bool ImageProcessor::isImageFile(const std::string& filename) {
-    std::vector<std::string> extensions = { ".png", ".jpg", ".jpeg", ".bmp" };
-    std::filesystem::path filePath(filename);
-    return std::find(extensions.begin(), extensions.end(), filePath.extension().string()) != extensions.end();
-}
+//     if (!cv::imwrite(fullOutputPath, newImage)) {
+//         std::cerr << "Failed to save the grayscale image to: " << fullOutputPath << std::endl;
+//     } else {
+//         std::cout << "Grayscale image saved to: " << fullOutputPath << std::endl;
+//     }
+// }

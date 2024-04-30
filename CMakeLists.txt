@@ -1,9 +1,14 @@
-cmake_minimum_required(VERSION 3.10)
-project(ImageProcessing)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+project(ImageProcessing LANGUAGES CXX CUDA)
 
 cmake_policy(SET CMP0115 NEW)
+cmake_policy(SET CMP0104 NEW)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+set(CMAKE_CUDA_RUNTIME_LIBRARY "Shared")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
+
 find_package(OpenCV REQUIRED)
 find_package(CUDA REQUIRED)
 
@@ -16,6 +21,12 @@ include_directories(
 add_executable(image_processing 
     src/main.cpp
     src/image_processor.cpp
+    src/utils.cu
 )
 
-target_link_libraries(image_processing ${OpenCV_LIBS} ${CUDA_LIBRARIES})
+set_target_properties(image_processing PROPERTIES 
+    CUDA_SEPARABLE_COMPILATION ON
+    CUDA_ARCHITECTURES "75"
+)
+
+target_link_libraries(image_processing PRIVATE ${OpenCV_LIBS} ${CUDA_LIBRARIES} ${CUDA_cudart_LIBRARY} ${CMAKE_DL_LIBS} pthread rt)

@@ -2,7 +2,7 @@
 
 # To do: 
 - [x] convert to greyscale
-- [ ] image rotation
+- [x] image rotation
 - [ ] image scaling
 - [ ] edge detection (simple)
 - [ ] Canny edge detector
@@ -10,7 +10,8 @@
 - [ ] Depth Map Generation
 - [ ] noise reduction
 - [ ] image filtering
-- [ ] blur
+- [x] blur
+- [ ] play around with params to get best performance for my gpu for each method, maybe create some .json file to parse this params, wo user can easily change them without digging in code 
 - [ ] fix cmake config and adjust readme
 - [ ] create diagrams with comparison of performance both for CPU and GPU
 - [ ] write some unit tests and make them auto run in the github

@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     }
 
     CudaImageProcessor processor(image);
-    processor.convertToGreyscale();
+    processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::convertToGreyscale);
     cv::Mat outputImage = processor.getOutputImage();
 
     cv::imshow("Grayscale Image", outputImage);

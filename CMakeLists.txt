@@ -22,7 +22,7 @@ include_directories(
 )
 
 add_executable(image_processing 
-    src/main.cu
+    src/main.cpp
     src/CudaImageProcessor.cu
 )
 

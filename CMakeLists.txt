@@ -13,7 +13,7 @@ set(ENV{PATH} "/usr/local/cuda/bin:$ENV{PATH}")
 set(ENV{LD_LIBRARY_PATH} "/usr/local/cuda/lib64:$ENV{LD_LIBRARY_PATH}")
 
 find_package(OpenCV REQUIRED)
-find_package(CUDA REQUIRED)
+find_package(CUDA REQUIRED) 
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
@@ -23,8 +23,7 @@ include_directories(
 
 add_executable(image_processing 
     src/main.cu
-    src/image_processor.cpp
-    src/utils.cu
+    src/CudaImageProcessor.cu
 )
 
 set_target_properties(image_processing PROPERTIES 

@@ -7,18 +7,17 @@
     } \
 }
 
-constexpr double sigma = 2.5;
+constexpr double sigma = 1.0;
 
 CudaImageProcessor::CudaImageProcessor(cv::Mat& input) 
-: inputImage(input), outputImage(input.rows, input.cols, CV_8UC1) {
+: inputImage(input), outputImage(input.rows, input.cols, CV_8UC3) { 
     numInputBytes = inputImage.rows * inputImage.step;
-    numOutputBytes = inputImage.rows * inputImage.cols;
+    numOutputBytes = inputImage.rows * inputImage.step;
 
     cudaMalloc(&d_input, numInputBytes);
     cudaMalloc(&d_output, numOutputBytes);
     cudaMemcpy(d_input, inputImage.data, numInputBytes, cudaMemcpyHostToDevice);
 }
-
 CudaImageProcessor::~CudaImageProcessor() {
     cudaFree(d_input);
     cudaFree(d_output);
@@ -57,7 +56,7 @@ void CudaImageProcessor::blur() {
     dim3 gridSize((inputImage.cols + blockSize.x - 1) / blockSize.x,
                   (inputImage.rows + blockSize.y - 1) / blockSize.y);
     
-    gaussianBlur<<<gridSize, blockSize>>>(d_input, d_output, inputImage.cols, inputImage.rows, d_kernel, kernelSize);
+    gaussianBlurKernel<<<gridSize, blockSize>>>(d_input, d_output, inputImage.cols, inputImage.rows, d_kernel, kernelSize);
     cudaCheckError();
 
     cudaMemcpy(outputImage.data, d_output, numOutputBytes, cudaMemcpyDeviceToHost);
@@ -98,7 +97,10 @@ __global__ void colorToGrayscaleKernel(unsigned char* input, unsigned char* outp
     unsigned char b = input[idx];
     unsigned char g = input[idx + 1];
     unsigned char r = input[idx + 2];
-    output[y * width + x] = static_cast<unsigned char>(0.114f * b + 0.587f * g + 0.299f * r);
+    unsigned char gray = static_cast<unsigned char>(0.114f * b + 0.587f * g + 0.299f * r);
+    output[idx] = gray;    
+    output[idx + 1] = gray;
+    output[idx + 2] = gray;
 }
 
 __global__ void rotateKernel(unsigned char* input, unsigned char* output, int width, int height) {
@@ -112,39 +114,40 @@ __global__ void rotateKernel(unsigned char* input, unsigned char* output, int wi
     int newY = height - 1 - y;
     int newIdx = newY * width * 3 + newX * 3;
     
-    output[newIdx] = input[idx];
+    output[newIdx]     = input[idx];
     output[newIdx + 1] = input[idx + 1];
     output[newIdx + 2] = input[idx + 2];
 }
 
-__global__ void gaussianBlur(unsigned char* input, unsigned char* output, int width, int height, double* kernel, int kernelSize) {
+__global__ void gaussianBlurKernel(unsigned char* input, unsigned char* output, int width, int height, double* kernel, int kernelSize) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
 
     if (x >= width || y >= height) return;
 
-    double redSum = 0.0, greenSum = 0.0, blueSum = 0.0;
     int halfKernel = kernelSize / 2;
+    double redSum = 0.0, greenSum = 0.0, blueSum = 0.0;
 
     for (int i = -halfKernel; i <= halfKernel; i++) {
         for (int j = -halfKernel; j <= halfKernel; j++) {
             int nx = x + i;
             int ny = y + j;
 
-            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                int imgIndex = (ny * width + nx) * 3;
-                int kernIndex = (i + halfKernel) * kernelSize + (j + halfKernel);
-                double kernelVal = kernel[kernIndex];
+            nx = max(0, min(nx, width - 1));
+            ny = max(0, min(ny, height - 1));
 
-                blueSum  += input[imgIndex]     * kernelVal;
-                greenSum += input[imgIndex + 1] * kernelVal;
-                redSum   += input[imgIndex + 2] * kernelVal;
-            }
+            int imgIndex = (ny * width + nx) * 3;
+            int kernIndex = (i + halfKernel) * kernelSize + (j + halfKernel);
+            double kernelVal = kernel[kernIndex];
+
+            blueSum  += input[imgIndex]     * kernelVal;
+            greenSum += input[imgIndex + 1] * kernelVal;
+            redSum   += input[imgIndex + 2] * kernelVal;
         }
     }
 
     int outputIndex = (y * width + x) * 3;
-    output[outputIndex]     = min(max(int(blueSum), 0), 255);
-    output[outputIndex + 1] = min(max(int(greenSum), 0), 255);
-    output[outputIndex + 2] = min(max(int(redSum), 0), 255);
+    output[outputIndex] = static_cast<unsigned char>(blueSum);   
+    output[outputIndex + 1] = static_cast<unsigned char>(greenSum); 
+    output[outputIndex + 2] = static_cast<unsigned char>(redSum); 
 }

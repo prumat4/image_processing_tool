@@ -15,12 +15,12 @@ int main(int argc, char** argv) {
 
     CudaImageProcessor processor(image);
     cv::imshow("Input image", image);
-    // processor.timeExecution("Rotate Conversion", &CudaImageProcessor::rotate);
     // processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::convertToGreyscale);
+    // processor.timeExecution("Rotate Conversion", &CudaImageProcessor::rotate);
     processor.timeExecution("Gaussian blur", &CudaImageProcessor::blur);
 
     cv::Mat outputImage = processor.getOutputImage();
-
+    cv::imwrite("../assets/blur/570x380_blur.jpg", outputImage);
     cv::imshow("Output image", outputImage);
     cv::waitKey(0);
     

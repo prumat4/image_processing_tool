@@ -10,7 +10,7 @@
 
 __global__ void colorToGrayscaleKernel(unsigned char* input, unsigned char* output, int width, int height);
 __global__ void rotateKernel(unsigned char* input, unsigned char* output, int width, int height);
-__global__ void gaussianBlur(unsigned char* input, unsigned char* output, int width, int height, double* kernel, int kernelsize);
+__global__ void gaussianBlurKernel(unsigned char* input, unsigned char* output, int width, int height, double* kernel, int kernelsize);
 __global__ void generateGaussianKernelDevice(double* kernel, int kernelSize, double sigma);
 
 class CudaImageProcessor {
@@ -41,7 +41,6 @@ private:
     unsigned char *d_output;
     size_t numInputBytes;
     size_t numOutputBytes;
-    
 };
 
 #endif 

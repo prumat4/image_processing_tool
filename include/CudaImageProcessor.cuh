@@ -7,6 +7,7 @@
 #include <iostream>
 
 __global__ void colorToGrayscaleKernel(unsigned char* input, unsigned char* output, int width, int height);
+__global__ void rotateKernel(unsigned char* input, unsigned char* output, int width, int height);
 
 class CudaImageProcessor {
 public:
@@ -14,6 +15,7 @@ public:
     ~CudaImageProcessor();
 
     void convertToGreyscale();
+    void rotate();
     cv::Mat getOutputImage();
 
     template<typename Func, typename... Args>

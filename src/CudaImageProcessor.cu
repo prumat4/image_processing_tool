@@ -23,6 +23,15 @@ void CudaImageProcessor::convertToGreyscale() {
     cudaMemcpy(outputImage.data, d_output, numOutputBytes, cudaMemcpyDeviceToHost);
 }
 
+void CudaImageProcessor::rotate() {
+    dim3 blockSize(16, 16);
+    dim3 gridSize((inputImage.cols + blockSize.x - 1) / blockSize.x,
+                  (inputImage.rows + blockSize.y - 1) / blockSize.y);
+    rotateKernel<<<gridSize, blockSize>>>(d_input, d_output, inputImage.cols, inputImage.rows);
+    cudaMemcpy(outputImage.data, d_output, numOutputBytes, cudaMemcpyDeviceToHost);
+}
+
+
 cv::Mat CudaImageProcessor::getOutputImage() {
     return outputImage;
 }
@@ -37,5 +46,21 @@ __global__ void colorToGrayscaleKernel(unsigned char* input, unsigned char* outp
         unsigned char g = input[idx + 1];
         unsigned char r = input[idx + 2];
         output[y * width + x] = static_cast<unsigned char>(0.114f * b + 0.587f * g + 0.299f * r);
+    }
+}
+
+__global__ void rotateKernel(unsigned char* input, unsigned char* output, int width, int height) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x < width && y < height) {
+        int idx = y * width * 3 + x * 3;
+        int newX = width - 1 - x;
+        int newY = height - 1 - y;
+        int newIdx = newY * width * 3 + newX * 3;
+
+        output[newIdx] = input[idx];
+        output[newIdx + 1] = input[idx + 1];
+        output[newIdx + 2] = input[idx + 2];
     }
 }

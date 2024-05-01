@@ -14,10 +14,14 @@ int main(int argc, char** argv) {
     }
 
     CudaImageProcessor processor(image);
-    processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::convertToGreyscale);
+    // processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::convertToGreyscale);
+    // cv::Mat outputImage = processor.getOutputImage();
+
+    processor.timeExecution("Rotate Conversion", &CudaImageProcessor::rotate);
     cv::Mat outputImage = processor.getOutputImage();
 
-    cv::imshow("Grayscale Image", outputImage);
+    cv::imshow("Input image", image);
+    cv::imshow("Output image", outputImage);
     cv::waitKey(0);
 
     return 0;

@@ -8,6 +8,7 @@ set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 set(CMAKE_CUDA_RUNTIME_LIBRARY "Shared")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
+set(CMAKE_C_FLAGS_PROFILE "-pg -g -O2" CACHE STRING "")                          
 
 set(ENV{PATH} "/usr/local/cuda/bin:$ENV{PATH}")
 set(ENV{LD_LIBRARY_PATH} "/usr/local/cuda/lib64:$ENV{LD_LIBRARY_PATH}")

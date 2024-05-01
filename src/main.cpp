@@ -14,15 +14,15 @@ int main(int argc, char** argv) {
     }
 
     CudaImageProcessor processor(image);
+    cv::imshow("Input image", image);
+    // processor.timeExecution("Rotate Conversion", &CudaImageProcessor::rotate);
     // processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::convertToGreyscale);
-    // cv::Mat outputImage = processor.getOutputImage();
+    processor.timeExecution("Gaussian blur", &CudaImageProcessor::blur);
 
-    processor.timeExecution("Rotate Conversion", &CudaImageProcessor::rotate);
     cv::Mat outputImage = processor.getOutputImage();
 
-    cv::imshow("Input image", image);
     cv::imshow("Output image", outputImage);
     cv::waitKey(0);
-
+    
     return 0;
 }

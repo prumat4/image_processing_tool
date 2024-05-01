@@ -1,11 +1,20 @@
 # image_processing_tool
 
 # To do: 
+- [x] convert to greyscale
+- [ ] image rotation
+- [ ] image scaling
+- [ ] edge detection (simple)
+- [ ] Canny edge detector
+- [ ] hdr
+- [ ] Depth Map Generation
+- [ ] noise reduction
+- [ ] image filtering
+- [ ] blur
 - [ ] fix cmake config and adjust readme
 - [ ] create diagrams with comparison of performance both for CPU and GPU
 - [ ] write some unit tests and make them auto run in the github
-- [ ] in assets folder threre should be only with input images, and there must be some function, which generates greyscale, blur and so on... 
-- [ ] 
+- [ ] in assets folder there should be only input images, and there must be some function, which generates greyscale, blur and so on... 
 
 
 # Project setup:

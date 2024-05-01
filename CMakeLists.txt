@@ -22,7 +22,7 @@ include_directories(
 )
 
 add_executable(image_processing 
-    src/main.cpp
+    src/main.cu
     src/image_processor.cpp
     src/utils.cu
 )

@@ -5,17 +5,22 @@ __global__ void grayscaleKernel(unsigned char* inputImage, unsigned char* output
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
 
-    if (x < width && y < height) {
-        int inputIdx = y * inputStep + 3 * x;
-        int outputIdx = y * outputStep + x;
-
-        unsigned char b = inputImage[inputIdx];
-        unsigned char g = inputImage[inputIdx + 1];
-        unsigned char r = inputImage[inputIdx + 2];
-
-        float grayscale = 0.114f * b + 0.587f * g + 0.299f * r;
-        outputImage[outputIdx] = static_cast<unsigned char>(grayscale);
+    if (x >= width || y >= height) {
+        return;
     }
+
+    int inputIdx = y * inputStep + 3 * x;
+    int outputIdx = y * outputStep + x;
+
+    inputIdx = min(inputIdx, static_cast<int>((height * inputStep) - 3)); 
+    outputIdx = min(outputIdx, static_cast<int>((height * outputStep) - 1));
+
+    unsigned char b = inputImage[inputIdx];
+    unsigned char g = inputImage[inputIdx + 1];
+    unsigned char r = inputImage[inputIdx + 2];
+
+    float grayscale = 0.114f * b + 0.587f * g + 0.299f * r;
+    outputImage[outputIdx] = static_cast<unsigned char>(grayscale);
 }
 
 void convertToGrayscale(unsigned char* inputImage, unsigned char* outputImage, int height, int width, size_t inputStep, size_t outputStep) {

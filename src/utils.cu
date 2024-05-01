@@ -1,33 +1,32 @@
+#include <iostream>
 #include <cuda_runtime.h>
 
-__global__ void addKernel(int *c, const int *a, const int *b, int size) {
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i < size) {
-        c[i] = a[i] + b[i];
+__global__ void grayscaleKernel(unsigned char* inputImage, unsigned char* outputImage, int height, int width, size_t inputStep, size_t outputStep) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x < width && y < height) {
+        int inputIdx = y * inputStep + 3 * x;
+        int outputIdx = y * outputStep + x;
+
+        unsigned char b = inputImage[inputIdx];
+        unsigned char g = inputImage[inputIdx + 1];
+        unsigned char r = inputImage[inputIdx + 2];
+
+        float grayscale = 0.114f * b + 0.587f * g + 0.299f * r;
+        outputImage[outputIdx] = static_cast<unsigned char>(grayscale);
     }
 }
 
-void addWithCuda(int *c, const int *a, const int *b, int size) {
-    int *dev_a = nullptr;
-    int *dev_b = nullptr;
-    int *dev_c = nullptr;
+void convertToGrayscale(unsigned char* inputImage, unsigned char* outputImage, int height, int width, size_t inputStep, size_t outputStep) {
+    dim3 blockSize(16, 16);
+    dim3 gridSize((width + blockSize.x - 1) / blockSize.x, (height + blockSize.y - 1) / blockSize.y);
 
-    cudaMalloc((void**)&dev_a, size * sizeof(int));
-    cudaMalloc((void**)&dev_b, size * sizeof(int));
-    cudaMalloc((void**)&dev_c, size * sizeof(int));
-
-    cudaMemcpy(dev_a, a, size * sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(dev_b, b, size * sizeof(int), cudaMemcpyHostToDevice);
-
-    int threadsPerBlock = 256;
-    int blocksPerGrid = (size + threadsPerBlock - 1) / threadsPerBlock;
-    addKernel<<<blocksPerGrid, threadsPerBlock>>>(dev_c, dev_a, dev_b, size);
-
+    grayscaleKernel<<<gridSize, blockSize>>>(inputImage, outputImage, height, width, inputStep, outputStep);
     cudaDeviceSynchronize();
-
-    cudaMemcpy(c, dev_c, size * sizeof(int), cudaMemcpyDeviceToHost);
-
-    cudaFree(dev_a);
-    cudaFree(dev_b);
-    cudaFree(dev_c);
+    cudaError_t error = cudaGetLastError();
+    if (error != cudaSuccess) {
+        std::cerr << "CUDA error: " << cudaGetErrorString(error) << std::endl;
+        exit(1);
+    }
 }

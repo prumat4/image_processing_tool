@@ -1,38 +1,29 @@
-#include "image_processor.hpp"
 #include <iostream>
+#include <opencv2/opencv.hpp>
 
-extern void addWithCuda(int *c, const int *a, const int *b, int size);
+extern void convertToGrayscale(unsigned char* inputImage, unsigned char* outputImage, int height, int width, size_t inputStep, size_t outputStep);
 
-int main() {
-    const int arraySize = 5;
-    int a[arraySize] = {1, 2, 3, 4, 5};
-    int b[arraySize] = {10, 20, 30, 40, 50};
-    int c[arraySize] = {0};
-
-    addWithCuda(c, a, b, arraySize);
-
-    for (int i = 0; i < arraySize; i++) {
-        std::cout << a[i] << " + " << b[i] << " = " << c[i] << std::endl;
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        std::cerr << "Usage: " << argv[0] << " <image_path>" << std::endl;
+        return 1;
     }
+
+    cv::Mat image = cv::imread(argv[1], cv::IMREAD_COLOR);
+    if (image.empty()) {
+        std::cerr << "Error: Image cannot be loaded." << std::endl;
+        return 1;
+    }
+
+    // cv::cvtColor(image, image, cv::COLOR_BGR2GRAY);
+    cv::imshow("Input Image", image);
+
+    cv::Mat outputImage(image.rows, image.cols, CV_8UC1);
+
+    convertToGrayscale(image.data, outputImage.data, image.rows, image.cols, image.step, outputImage.step);
+
+    cv::imshow("Grayscale Image", outputImage);
+    cv::waitKey(0);
 
     return 0;
 }
-
-// int main(int argc, char** argv) {
-//     std::cout << "Starting the image processing program.\n";
-
-//     if (argc < 2) {
-//         std::cerr << "Usage: " << argv[0] << " <path>\n";
-//         return 1; 
-//     }
-
-//     ImageProcessor processor;
-
-//     processor.readFromFile(argv[1]);
-//     processor.displayImage("input image");
-//     // processor.processAllImagesInDirectory("../assets");
-
-//     Wrapper::wrapper();
-
-//     return 0;
-// }

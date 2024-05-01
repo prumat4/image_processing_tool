@@ -41,3 +41,5 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE \
 make -j$(nproc)
 
 sudo make install
+
+chmod +x build.sh

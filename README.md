@@ -9,7 +9,7 @@
 
 
 # Project setup:
-Note: steps [2 - n] can be performed using setup.sh
+Note: steps [2 - n] can be performed using setup.sh, do ```chmod +x setup.sh```
 1. install cuda: https://developer.nvidia.com/cuda-downloads
 
 2. add CUDA to your PATH:

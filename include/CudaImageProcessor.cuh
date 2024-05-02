@@ -8,20 +8,35 @@
 #include <stdio.h>
 #include <iostream>
 
-__global__ void colorToGrayscaleKernel(unsigned char* input, unsigned char* output, int width, int height);
+__global__ void colorToGreyscaleKernel(unsigned char* input, unsigned char* output, int width, int height);
+__global__ void colorToSepiaKernel(unsigned char* input, unsigned char* output, int width, int height);
+__global__ void colorToInvertedKernel(unsigned char* input, unsigned char* output, int width, int height);
+__global__ void colorToBinaryKernel(unsigned char* input, unsigned char* output, int width, int height);
+__global__ void colorToCoolingKernel(unsigned char* input, unsigned char* output, int width, int height);
+__global__ void colorToRedBoostKernel(unsigned char* input, unsigned char* output, int width, int height);
+
 __global__ void rotateKernel(unsigned char* input, unsigned char* output, int width, int height);
 __global__ void gaussianBlurKernel(unsigned char* input, unsigned char* output, int width, int height, double* kernel, int kernelsize);
 __global__ void generateGaussianKernelDevice(double* kernel, int kernelSize, double sigma);
 
 class CudaImageProcessor {
 public:
+    using KernelFunc = void (*)(unsigned char*, unsigned char*, int, int);
+
     CudaImageProcessor(cv::Mat& input);
     ~CudaImageProcessor();
 
-    void convertToGreyscale();
+    void greyscale();
+    void sepia();
+    void invert();
     void rotate();
+    void binary();
+    void cooling();
+    void redBoost();
     void blur();
+
     cv::Mat getOutputImage();
+    void processImage(KernelFunc kernel);
 
     template<typename Func, typename... Args>
     void timeExecution(const std::string& functionName, Func func, Args&&... args) {

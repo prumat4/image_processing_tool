@@ -23,20 +23,40 @@ CudaImageProcessor::~CudaImageProcessor() {
     cudaFree(d_output);
 }
 
-void CudaImageProcessor::convertToGreyscale() {
+void CudaImageProcessor::processImage(KernelFunc kernel) {
     dim3 blockSize(16, 16);
     dim3 gridSize((inputImage.cols + blockSize.x - 1) / blockSize.x,
                   (inputImage.rows + blockSize.y - 1) / blockSize.y);
-    colorToGrayscaleKernel<<<gridSize, blockSize>>>(d_input, d_output, inputImage.cols, inputImage.rows);
+    kernel<<<gridSize, blockSize>>>(d_input, d_output, inputImage.cols, inputImage.rows);
     cudaMemcpy(outputImage.data, d_output, numOutputBytes, cudaMemcpyDeviceToHost);
 }
 
+void CudaImageProcessor::greyscale() {
+    processImage(colorToGreyscaleKernel);
+}
+
+void CudaImageProcessor::sepia() {
+    processImage(colorToSepiaKernel);
+}
+
+void CudaImageProcessor::invert() {
+    processImage(colorToInvertedKernel);
+}
+
+void CudaImageProcessor::binary() {
+    processImage(colorToBinaryKernel);
+}
+
+void CudaImageProcessor::cooling() {
+    processImage(colorToCoolingKernel);
+}
+
+void CudaImageProcessor::redBoost() {
+    processImage(colorToRedBoostKernel);
+}
+    
 void CudaImageProcessor::rotate() {
-    dim3 blockSize(16, 16);
-    dim3 gridSize((inputImage.cols + blockSize.x - 1) / blockSize.x,
-                  (inputImage.rows + blockSize.y - 1) / blockSize.y);
-    rotateKernel<<<gridSize, blockSize>>>(d_input, d_output, inputImage.cols, inputImage.rows);
-    cudaMemcpy(outputImage.data, d_output, numOutputBytes, cudaMemcpyDeviceToHost);
+    processImage(rotateKernel);
 }
 
 void CudaImageProcessor::blur() {
@@ -87,7 +107,103 @@ __global__ void generateGaussianKernelDevice(double* kernel, int kernelSize, dou
     }
 }
 
-__global__ void colorToGrayscaleKernel(unsigned char* input, unsigned char* output, int width, int height) {
+__global__ void colorToBinaryKernel(unsigned char* input, unsigned char* output, int width, int height) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x >= width || y >= height) return;
+
+    int idx = y * width * 3 + x * 3;
+    unsigned char b = input[idx];
+    unsigned char g = input[idx + 1];
+    unsigned char r = input[idx + 2];
+    unsigned char gray = static_cast<unsigned char>(0.299f * r + 0.587f * g + 0.114f * b);
+    unsigned char binary = gray > 100 ? 255 : 0;
+
+    output[idx] = binary;
+    output[idx + 1] = binary;
+    output[idx + 2] = binary;
+}
+
+__global__ void colorToCoolingKernel(unsigned char* input, unsigned char* output, int width, int height) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x >= width || y >= height) return;
+
+    int idx = y * width * 3 + x * 3;
+    unsigned char b = input[idx];
+    unsigned char g = input[idx + 1];
+    unsigned char r = input[idx + 2];
+
+    float coolB = 1.2f * b;
+    coolB = coolB > 255 ? 255 : coolB;
+
+    output[idx] = static_cast<unsigned char>(coolB);
+    output[idx + 1] = g;
+    output[idx + 2] = r;
+}
+
+__global__ void colorToInvertedKernel(unsigned char* input, unsigned char* output, int width, int height) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x >= width || y >= height) return;
+
+    int idx = y * width * 3 + x * 3;
+    unsigned char b = input[idx];
+    unsigned char g = input[idx + 1];
+    unsigned char r = input[idx + 2];
+
+    output[idx] = 255 - b;
+    output[idx + 1] = 255 - g;
+    output[idx + 2] = 255 - r;
+}
+
+__global__ void colorToSepiaKernel(unsigned char* input, unsigned char* output, int width, int height) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x >= width || y >= height) return;
+
+    int idx = y * width * 3 + x * 3;
+    unsigned char b = input[idx];
+    unsigned char g = input[idx + 1];
+    unsigned char r = input[idx + 2];
+
+    float sepiaR = 0.393f * r + 0.769f * g + 0.189f * b;
+    float sepiaG = 0.349f * r + 0.686f * g + 0.168f * b;
+    float sepiaB = 0.272f * r + 0.534f * g + 0.131f * b;
+
+    sepiaR = sepiaR > 255 ? 255 : sepiaR;
+    sepiaG = sepiaG > 255 ? 255 : sepiaG;
+    sepiaB = sepiaB > 255 ? 255 : sepiaB;
+
+    output[idx] = static_cast<unsigned char>(sepiaB);
+    output[idx + 1] = static_cast<unsigned char>(sepiaG);
+    output[idx + 2] = static_cast<unsigned char>(sepiaR);
+}
+
+__global__ void colorToRedBoostKernel(unsigned char* input, unsigned char* output, int width, int height) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (x >= width || y >= height) return;
+
+    int idx = y * width * 3 + x * 3;
+    unsigned char b = input[idx];
+    unsigned char g = input[idx + 1];
+    unsigned char r = input[idx + 2];
+
+    float boostR = 1.2f * r;
+    boostR = boostR > 255 ? 255 : boostR;
+
+    output[idx] = b;
+    output[idx + 1] = g;
+    output[idx + 2] = static_cast<unsigned char>(boostR);
+}
+
+__global__ void colorToGreyscaleKernel(unsigned char* input, unsigned char* output, int width, int height) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
 

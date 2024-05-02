@@ -7,7 +7,7 @@ namespace fs = std::filesystem;
 
 // int main() {
 //     std::string inputDirectory = "../assets/";
-//     std::string outputDirectory = "../assets/rotate";
+//     std::string outputDirectory = "../assets/red";
     
 //     fs::create_directories(outputDirectory);
 
@@ -20,10 +20,10 @@ namespace fs = std::filesystem;
 //             }
 
 //             CudaImageProcessor processor(image);
-//             processor.timeExecution("Gaussian blur", &CudaImageProcessor::rotate);
+//             processor.timeExecution("Gaussian blur", &CudaImageProcessor::redBoost);
 //             cv::Mat outputImage = processor.getOutputImage();
 
-//             std::string outputFilePath = outputDirectory + "/" + entry.path().stem().string() + "_rotate.jpg";
+//             std::string outputFilePath = outputDirectory + "/" + entry.path().stem().string() + "_red.jpg";
 //             cv::imwrite(outputFilePath, outputImage);
 //         }
 //     }
@@ -48,12 +48,15 @@ int main(int argc, char** argv) {
 
     CudaImageProcessor processor(image);
     cv::imshow("Input image", image);
-    processor.timeExecution("Gaussian blur", &CudaImageProcessor::blur);
-    // processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::convertToGreyscale);
+    // processor.timeExecution("Gaussian blur", &CudaImageProcessor::blur);
+    // processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::greyscale);
     // processor.timeExecution("Rotate Conversion", &CudaImageProcessor::rotate);
 
+    processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::sepia);
+
+
     cv::Mat outputImage = processor.getOutputImage();
-    cv::imwrite("../assets/blur/1600x900_blur.jpg", outputImage);
+    // cv::imwrite("../assets/blur/1600x900_blur.jpg", outputImage);
     cv::imshow("Output image", outputImage);
     cv::waitKey(0);
     

@@ -7,7 +7,7 @@ namespace fs = std::filesystem;
 
 int main() {
     std::string inputDirectory = "../assets/";
-    std::string outputDirectory = "../assets/edgeDetector";
+    std::string outputDirectory = "../assets/blur";
     
     fs::create_directories(outputDirectory);
 
@@ -19,11 +19,12 @@ int main() {
                 continue;
             }
 
+            double s = 10.0;
             CudaImageProcessor processor(image);
-            processor.timeExecution("Gaussian blur", &CudaImageProcessor::cannyEdgeDetection);
+            processor.timeExecution("Gaussian blur", processor, &CudaImageProcessor::blur, s);
             cv::Mat outputImage = processor.getOutputImage();
 
-            std::string outputFilePath = outputDirectory + "/" + entry.path().stem().string() + "_edge.jpg";
+            std::string outputFilePath = outputDirectory + "/" + entry.path().stem().string() + ".jpg";
             cv::imwrite(outputFilePath, outputImage);
         }
     }
@@ -31,8 +32,8 @@ int main() {
     return 0;
 }
 
-#include <iostream>
-#include "CudaImageProcessor.cuh"
+// #include <iostream>
+// #include "CudaImageProcessor.cuh"
 
 // int main(int argc, char** argv) {
 //     if (argc < 2) {

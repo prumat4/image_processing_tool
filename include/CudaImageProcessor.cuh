@@ -34,15 +34,15 @@ public:
     void binary();
     void cooling();
     void redBoost();
-    void blur();
-    void cannyEdgeDetection();
+    void blur(const double sigma);
+    void cannyEdgeDetection(const double sigma);
     cv::Mat getOutputImage();
     void processImage(KernelFunc kernel);
 
-    template<typename Func, typename... Args>
-    void timeExecution(const std::string& functionName, Func func, Args&&... args) {
+    template<typename Obj, typename Func, typename... Args>
+    void timeExecution(const std::string& functionName, Obj& obj, Func func, Args&&... args) {
         auto start = std::chrono::high_resolution_clock::now();
-        (this->*func)(std::forward<Args>(args)...);
+        (obj.*func)(std::forward<Args>(args)...); // Call the member function on the object
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> elapsed = end - start;
         std::cout << "Execution time of " << functionName << ": " << elapsed.count() << " ms\n";

@@ -7,8 +7,6 @@
     } \
 }
 
-constexpr double sigma = 1.0;
-
 __constant__ float sobelX[9] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
 __constant__ float sobelY[9] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
 
@@ -68,7 +66,7 @@ void CudaImageProcessor::rotate() {
     processImage(rotateKernel);
 }
 
-void CudaImageProcessor::blur() {
+void CudaImageProcessor::blur(const double sigma) {
     double* d_kernel = nullptr;
     int kernelSize = 6 * sigma + 1; 
     size_t kernelBytes = kernelSize * kernelSize * sizeof(double);
@@ -94,12 +92,12 @@ void CudaImageProcessor::blur() {
     cudaFree(d_kernel); 
 }
 
-void CudaImageProcessor::cannyEdgeDetection() {
+void CudaImageProcessor::cannyEdgeDetection(const double sigma) {
     dim3 blockSize(16, 16);
     dim3 gridSize((inputImage.cols + blockSize.x - 1) / blockSize.x,
                   (inputImage.rows + blockSize.y - 1) / blockSize.y);
 
-    blur();
+    blur(sigma);
 
     gradientCalculationKernel<<<gridSize, blockSize>>>(d_output, d_gradientMag, d_gradientDir, inputImage.cols, inputImage.rows);
     cudaCheckError();

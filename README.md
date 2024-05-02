@@ -1,10 +1,9 @@
 # image_processing_tool
 
 # To do: 
-- [x] convert to greyscale
+- [x] convert to greyscale and mb other filters too
 - [x] image rotation
 - [ ] image scaling
-- [ ] edge detection (simple)
 - [ ] Canny edge detector
 - [ ] hdr
 - [ ] Depth Map Generation

@@ -14,7 +14,6 @@ __global__ void colorToInvertedKernel(unsigned char* input, unsigned char* outpu
 __global__ void colorToBinaryKernel(unsigned char* input, unsigned char* output, int width, int height);
 __global__ void colorToCoolingKernel(unsigned char* input, unsigned char* output, int width, int height);
 __global__ void colorToRedBoostKernel(unsigned char* input, unsigned char* output, int width, int height);
-
 __global__ void rotateKernel(unsigned char* input, unsigned char* output, int width, int height);
 __global__ void gaussianBlurKernel(unsigned char* input, unsigned char* output, int width, int height, double* kernel, int kernelsize);
 __global__ void generateGaussianKernelDevice(double* kernel, int kernelSize, double sigma);

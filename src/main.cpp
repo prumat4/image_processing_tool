@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     // processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::greyscale);
     // processor.timeExecution("Rotate Conversion", &CudaImageProcessor::rotate);
 
-    processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::sepia);
+    processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::blur);
 
 
     cv::Mat outputImage = processor.getOutputImage();

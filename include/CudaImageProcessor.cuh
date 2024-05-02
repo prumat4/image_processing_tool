@@ -17,6 +17,8 @@ __global__ void colorToRedBoostKernel(unsigned char* input, unsigned char* outpu
 __global__ void rotateKernel(unsigned char* input, unsigned char* output, int width, int height);
 __global__ void gaussianBlurKernel(unsigned char* input, unsigned char* output, int width, int height, double* kernel, int kernelsize);
 __global__ void generateGaussianKernelDevice(double* kernel, int kernelSize, double sigma);
+__global__ void gradientCalculationKernel(unsigned char* input, float* gradientMag, float* gradientDir, int width, int height);
+__global__ void nonMaximumSuppressionKernel(float* gradientMag, float* gradientDir, unsigned char* output, int width, int height);
 
 class CudaImageProcessor {
 public:
@@ -33,7 +35,7 @@ public:
     void cooling();
     void redBoost();
     void blur();
-
+    void cannyEdgeDetection();
     cv::Mat getOutputImage();
     void processImage(KernelFunc kernel);
 
@@ -53,8 +55,11 @@ private:
     cv::Mat outputImage;
     unsigned char *d_input;
     unsigned char *d_output;
+    float *d_gradientMag;
+    float *d_gradientDir;
     size_t numInputBytes;
     size_t numOutputBytes;
+    size_t numGradientBytes;
 };
 
 #endif 

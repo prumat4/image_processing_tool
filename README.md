@@ -16,7 +16,6 @@
 - [ ] write some unit tests and make them auto run in the github
 - [ ] in assets folder there should be only input images, and there must be some function, which generates greyscale, blur and so on... 
 
-
 # Project setup:
 Note: steps [2 - n] can be performed using setup.sh, do ```chmod +x setup.sh```
 1. install cuda: https://developer.nvidia.com/cuda-downloads

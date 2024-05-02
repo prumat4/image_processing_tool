@@ -7,20 +7,29 @@
     } \
 }
 
-constexpr double sigma = 3.0;
+constexpr double sigma = 1.0;
+
+__constant__ float sobelX[9] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
+__constant__ float sobelY[9] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
 
 CudaImageProcessor::CudaImageProcessor(cv::Mat& input) 
-: inputImage(input), outputImage(input.rows, input.cols, CV_8UC3) { 
+: inputImage(input), outputImage(input.rows, input.cols, CV_8UC3) {
     numInputBytes = inputImage.rows * inputImage.step;
     numOutputBytes = inputImage.rows * inputImage.step;
+    numGradientBytes = inputImage.rows * inputImage.cols * sizeof(float);
 
     cudaMalloc(&d_input, numInputBytes);
     cudaMalloc(&d_output, numOutputBytes);
+    cudaMalloc(&d_gradientMag, numGradientBytes);
+    cudaMalloc(&d_gradientDir, numGradientBytes);
     cudaMemcpy(d_input, inputImage.data, numInputBytes, cudaMemcpyHostToDevice);
 }
+
 CudaImageProcessor::~CudaImageProcessor() {
     cudaFree(d_input);
     cudaFree(d_output);
+    cudaFree(d_gradientMag);
+    cudaFree(d_gradientDir);
 }
 
 void CudaImageProcessor::processImage(KernelFunc kernel) {
@@ -83,6 +92,23 @@ void CudaImageProcessor::blur() {
     cudaCheckError();
 
     cudaFree(d_kernel); 
+}
+
+void CudaImageProcessor::cannyEdgeDetection() {
+    dim3 blockSize(16, 16);
+    dim3 gridSize((inputImage.cols + blockSize.x - 1) / blockSize.x,
+                  (inputImage.rows + blockSize.y - 1) / blockSize.y);
+
+    blur();
+
+    gradientCalculationKernel<<<gridSize, blockSize>>>(d_output, d_gradientMag, d_gradientDir, inputImage.cols, inputImage.rows);
+    cudaCheckError();
+
+    nonMaximumSuppressionKernel<<<gridSize, blockSize>>>(d_gradientMag, d_gradientDir, d_output, inputImage.cols, inputImage.rows);
+    cudaCheckError();
+
+    cudaMemcpy(outputImage.data, d_output, numOutputBytes, cudaMemcpyDeviceToHost);
+    cudaCheckError();
 }
 
 cv::Mat CudaImageProcessor::getOutputImage() {
@@ -266,4 +292,54 @@ __global__ void gaussianBlurKernel(unsigned char* input, unsigned char* output, 
     output[outputIndex] = static_cast<unsigned char>(blueSum);   
     output[outputIndex + 1] = static_cast<unsigned char>(greenSum); 
     output[outputIndex + 2] = static_cast<unsigned char>(redSum); 
+}
+
+__global__ void gradientCalculationKernel(unsigned char* input, float* gradientMag, float* gradientDir, int width, int height) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int idx = y * width + x;
+
+    if (x >= width || y >= height) return;
+
+    float gx = 0.0, gy = 0.0;
+    if (x > 0 && y > 0 && x < width - 1 && y < height - 1) {
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                int px = x + j;
+                int py = y + i;
+                int pos = (py * width + px) * 3;
+                float intensity = (input[pos] + input[pos + 1] + input[pos + 2]) / 3.0;
+                
+                gx += intensity * sobelX[(i + 1) * 3 + (j + 1)];
+                gy += intensity * sobelY[(i + 1) * 3 + (j + 1)];
+            }
+        }
+    }
+    gradientMag[idx] = sqrt(gx * gx + gy * gy);
+    gradientDir[idx] = atan2f(gy, gx);
+}
+
+__global__ void nonMaximumSuppressionKernel(float* gradientMag, float* gradientDir, unsigned char* output, int width, int height) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int idx = y * width + x;
+
+    if (x >= width || y >= height) return;
+
+    float angle = gradientDir[idx] * (180 / M_PI);
+    angle = (angle < 0) ? angle + 180 : angle;
+
+    int q = 255, r = 255;
+    if ((angle >= 0 && angle < 22.5) || (angle >= 157.5 && angle <= 180)) {
+        q = (x + 1 < width) ? gradientMag[idx + 1] : 255;
+        r = (x - 1 >= 0) ? gradientMag[idx - 1] : 255;
+    } else if (angle >= 22.5 && angle < 67.5) {
+        q = (x + 1 < width && y - 1 >= 0) ? gradientMag[(y - 1) * width + (x + 1)] : 255;
+        r = (x - 1 >= 0 && y + 1 < height) ? gradientMag[(y + 1) * width + (x - 1)] : 255;
+    } 
+
+    if (gradientMag[idx] >= q || gradientMag[idx] >= r)
+        output[idx * 3] = output[idx * 3 + 1] = output[idx * 3 + 2] = (unsigned char)(gradientMag[idx] > 255 ? 255 : gradientMag[idx]);
+    else
+        output[idx * 3] = output[idx * 3 + 1] = output[idx * 3 + 2] = 0;
 }

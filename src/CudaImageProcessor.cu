@@ -7,7 +7,7 @@
     } \
 }
 
-constexpr double sigma = 1.0;
+constexpr double sigma = 3.0;
 
 CudaImageProcessor::CudaImageProcessor(cv::Mat& input) 
 : inputImage(input), outputImage(input.rows, input.cols, CV_8UC3) { 

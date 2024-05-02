@@ -1,4 +1,37 @@
 #include <iostream>
+#include <filesystem>
+#include <opencv2/opencv.hpp>
+#include "CudaImageProcessor.cuh"
+
+namespace fs = std::filesystem;
+
+// int main() {
+//     std::string inputDirectory = "../assets/";
+//     std::string outputDirectory = "../assets/rotate";
+    
+//     fs::create_directories(outputDirectory);
+
+//     for (const auto& entry : fs::directory_iterator(inputDirectory)) {
+//         if (entry.is_regular_file() && (entry.path().extension() == ".jpg" || entry.path().extension() == ".jpeg")) {
+//             cv::Mat image = cv::imread(entry.path().string(), cv::IMREAD_COLOR);
+//             if (image.empty()) {
+//                 std::cerr << "Error: Unable to open " << entry.path() << std::endl;
+//                 continue;
+//             }
+
+//             CudaImageProcessor processor(image);
+//             processor.timeExecution("Gaussian blur", &CudaImageProcessor::rotate);
+//             cv::Mat outputImage = processor.getOutputImage();
+
+//             std::string outputFilePath = outputDirectory + "/" + entry.path().stem().string() + "_rotate.jpg";
+//             cv::imwrite(outputFilePath, outputImage);
+//         }
+//     }
+    
+//     return 0;
+// }
+
+#include <iostream>
 #include "CudaImageProcessor.cuh"
 
 int main(int argc, char** argv) {
@@ -15,12 +48,12 @@ int main(int argc, char** argv) {
 
     CudaImageProcessor processor(image);
     cv::imshow("Input image", image);
+    processor.timeExecution("Gaussian blur", &CudaImageProcessor::blur);
     // processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::convertToGreyscale);
     // processor.timeExecution("Rotate Conversion", &CudaImageProcessor::rotate);
-    processor.timeExecution("Gaussian blur", &CudaImageProcessor::blur);
 
     cv::Mat outputImage = processor.getOutputImage();
-    cv::imwrite("../assets/blur/570x380_blur.jpg", outputImage);
+    cv::imwrite("../assets/blur/1600x900_blur.jpg", outputImage);
     cv::imshow("Output image", outputImage);
     cv::waitKey(0);
     

@@ -36,6 +36,7 @@ public:
     void redBoost();
     void blur(const double sigma);
     void cannyEdgeDetection(const double sigma);
+    
     cv::Mat getOutputImage();
     void processImage(KernelFunc kernel);
 

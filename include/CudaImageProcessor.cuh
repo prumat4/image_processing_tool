@@ -42,7 +42,7 @@ public:
     template<typename Obj, typename Func, typename... Args>
     void timeExecution(const std::string& functionName, Obj& obj, Func func, Args&&... args) {
         auto start = std::chrono::high_resolution_clock::now();
-        (obj.*func)(std::forward<Args>(args)...); // Call the member function on the object
+        (obj.*func)(std::forward<Args>(args)...);
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> elapsed = end - start;
         std::cout << "Execution time of " << functionName << ": " << elapsed.count() << " ms\n";

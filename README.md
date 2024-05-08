@@ -4,7 +4,7 @@
 - [x] convert to greyscale and mb other filters too
 - [x] image rotation
 - [ ] image scaling
-- [ ] Canny edge detector
+- [x] Canny edge detector
 - [ ] hdr
 - [ ] Depth Map Generation
 - [ ] noise reduction
@@ -12,7 +12,7 @@
 - [x] blur
 - [ ] play around with params to get best performance for my gpu for each method, maybe create some .json file to parse this params, wo user can easily change them without digging in code 
 - [ ] fix cmake config and adjust readme
-- [ ] create diagrams with comparison of performance both for CPU and GPU
+- [ ] create diagrams with comparison of performance both for CPU and GPU, use ROOT library https://root.cern/
 - [ ] write some unit tests and make them auto run in the github
 - [ ] in assets folder there should be only input images, and there must be some function, which generates greyscale, blur and so on... 
 

@@ -79,7 +79,7 @@ void CudaImageProcessor::blur(const double sigma) {
     generateGaussianKernelDevice<<<gridSizeKernel, blockSizeKernel>>>(d_kernel, kernelSize, sigma);
     cudaCheckError();
 
-    dim3 blockSize(16, 16);
+    dim3 blockSize(32, 32);
     dim3 gridSize((inputImage.cols + blockSize.x - 1) / blockSize.x,
                   (inputImage.rows + blockSize.y - 1) / blockSize.y);
     

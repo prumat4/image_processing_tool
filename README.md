@@ -23,7 +23,6 @@ there should be some kinda fkag to run the actual perforamnce test (lot of image
 # Project setup:
 Note: steps [2 - n] can be performed using setup.sh, do ```chmod +x setup.sh```
 1. install cuda: https://developer.nvidia.com/cuda-downloads
-
 2. add CUDA to your PATH:
 ```bash
 export PATH=/usr/local/cuda/bin:$PATH
@@ -38,12 +37,20 @@ libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264
 libatlas-base-dev gfortran python3-dev python3-numpy libtbb2 libtbb-dev libdc1394-22-dev
 ```
 
-4. install OpenCV
-```bash
-sudo apt-get install -y libopencv-dev
+4. install cuDNN: https://developer.nvidia.com/cudnn (version 8.9.7, because there is this issue with cuda 9.1.1 https://github.com/opencv/opencv/issues/24983)
+![alt text](image.png)
 ```
-
+try to uninstall 9.1.1 and install 8.9.7 if needed
+```
+archieve releases: https://developer.nvidia.com/rdp/cudnn-archive
+5. How install OpenCV with CUDA: https://medium.com/@juancrrn/installing-opencv-4-with-cuda-in-ubuntu-20-04-fde6d6a0a367
+I faced this issue: https://github.com/NVlabs/instant-ngp/issues/119, this suggestion worked for me: https://github.com/NVlabs/instant-ngp/issues/119#issuecomment-1698809070
+<!-- ```bash
+sudo apt-get install -y libopencv-dev
+``` -->
 
 # Links: 
 1. CUDA docs: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#
-2. OpenCV docs: https://docs.opencv.org/4.x/d1/dfb/intro.html
+2. GPU compute capability: https://developer.nvidia.com/cuda-gpus, mine is NVIDIA GeForce RTX 3060 Laptop GPU with capability of 8.6 => 
+3. OpenCV docs: https://docs.opencv.org/4.x/d1/dfb/intro.html
+

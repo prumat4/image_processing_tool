@@ -5,9 +5,6 @@
 
 namespace fs = std::filesystem;
 
-#include <iostream>
-#include "CudaImageProcessor.cuh"
-
 int main(int argc, char** argv) {
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <Image_Path>\n";

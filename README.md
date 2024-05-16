@@ -44,7 +44,7 @@ libatlas-base-dev gfortran python3-dev python3-numpy libtbb2 libtbb-dev libdc139
 try to uninstall 9.1.1 and install 8.9.7 if needed
 ```
 archieve releases: https://developer.nvidia.com/rdp/cudnn-archive
-5. How install OpenCV with CUDA: https://medium.com/@juancrrn/installing-opencv-4-with-cuda-in-ubuntu-20-04-fde6d6a0a367
+5. How to build OpenCV with CUDA: https://medium.com/@juancrrn/installing-opencv-4-with-cuda-in-ubuntu-20-04-fde6d6a0a367
 I faced this issue: https://github.com/NVlabs/instant-ngp/issues/119, this suggestion worked for me: https://github.com/NVlabs/instant-ngp/issues/119#issuecomment-1698809070
 <!-- ```bash
 sudo apt-get install -y libopencv-dev

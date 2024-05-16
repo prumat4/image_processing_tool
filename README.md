@@ -38,7 +38,8 @@ libatlas-base-dev gfortran python3-dev python3-numpy libtbb2 libtbb-dev libdc139
 ```
 
 4. install cuDNN: https://developer.nvidia.com/cudnn (version 8.9.7, because there is this issue with cuda 9.1.1 https://github.com/opencv/opencv/issues/24983)
-![alt text](image.png)
+![Screenshot from 2024-05-17 00-00-51](https://github.com/prumat4/image_processing_tool/assets/108902150/214912e0-158e-430f-ba87-b0f8fe3ac155)
+
 ```
 try to uninstall 9.1.1 and install 8.9.7 if needed
 ```

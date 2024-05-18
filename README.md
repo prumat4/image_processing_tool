@@ -55,3 +55,6 @@ sudo apt-get install -y libopencv-dev
 2. GPU compute capability: https://developer.nvidia.com/cuda-gpus, mine is NVIDIA GeForce RTX 3060 Laptop GPU with capability of 8.6 => 
 3. OpenCV docs: https://docs.opencv.org/4.x/d1/dfb/intro.html
 
+
+
+mb try docker? https://chatgpt.com/c/12a38b20-c7a2-48f9-8925-d71f2125824c

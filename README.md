@@ -57,4 +57,4 @@ sudo apt-get install -y libopencv-dev
 
 
 
-mb try docker? https://chatgpt.com/c/12a38b20-c7a2-48f9-8925-d71f2125824c
+mb try docker? https://chatgpt.com/share/c5c9b546-a53e-478b-8ae2-5d22253e6b09

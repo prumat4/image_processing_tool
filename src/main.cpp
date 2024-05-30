@@ -19,10 +19,6 @@ int main(int argc, char** argv) {
 
     CudaImageProcessor processor(image);
     cv::imshow("Input image", image);
-    // processor.timeExecution("Gaussian blur", &CudaImageProcessor::blur);
-    // processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::greyscale);
-    // processor.timeExecution("Rotate Conversion", &CudaImageProcessor::rotate);
-    // processor.timeExecution("Grayscale Conversion", &CudaImageProcessor::blur);
 
     processor.timeExecution("Canny edge detection", processor, &CudaImageProcessor::cannyEdgeDetection, 1.1);
 

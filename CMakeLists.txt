@@ -13,8 +13,6 @@ set(CMAKE_C_FLAGS_PROFILE "-pg -g -O2" CACHE STRING "")
 set(ENV{PATH} "/usr/local/cuda/bin:$ENV{PATH}")
 set(ENV{LD_LIBRARY_PATH} "/usr/local/cuda/lib64:$ENV{LD_LIBRARY_PATH}")
 
-# export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-# export CUDA_HOME=/usr/local/cuda
 
 find_package(OpenCV REQUIRED)
 find_package(CUDA REQUIRED) 
@@ -29,20 +27,10 @@ add_executable(image_processing
     src/main.cpp
     src/CudaImageProcessor.cu
 )
-# if build testing
-add_executable(time_comparison
-    src/CudaImageProcessor.cu
-    test/TimeComparison.cpp
-)
 
 set_target_properties(image_processing PROPERTIES 
     CUDA_SEPARABLE_COMPILATION ON
     CUDA_ARCHITECTURES "75"
 )
-set_target_properties(time_comparison PROPERTIES 
-    CUDA_SEPARABLE_COMPILATION ON
-    CUDA_ARCHITECTURES "75"
-)
 
 target_link_libraries(image_processing PRIVATE ${OpenCV_LIBS} ${CUDA_LIBRARIES} ${CUDA_cudart_LIBRARY} ${CMAKE_DL_LIBS} pthread rt)
-target_link_libraries(time_comparison PRIVATE ${OpenCV_LIBS} ${CUDA_LIBRARIES} ${CUDA_cudart_LIBRARY} ${CMAKE_DL_LIBS} pthread rt)

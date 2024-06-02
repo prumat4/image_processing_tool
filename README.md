@@ -6,9 +6,9 @@ This is a project that implements a high resolution(5000x5000 pixels and more) i
 # Project setup:
 1. install CUDA, cuDNN and OpencCV
 2. there are some useful links at the bottom of the readme
-3. 3. build and run:
+3. build and run:
 ```bash
-bash build.sh && ./imфge_processing_tool [path/to/image]
+bash build.sh && ./image_processing_tool [path/to/image]
 ```
 
 # Results

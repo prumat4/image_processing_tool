@@ -1,7 +1,7 @@
 # image_processing_tool
 
 # Description of the project and motivation
-This is a project that implements an high resolution(5000x5000 pixels and more) image processing tool that uses CUDA to process images. Here you can find basic image filters such as grayscale, sepia, binary, etc. The most interesting part was the implementation of the Canny edge detection algorithm and Gaussian blur, here is an article on this topic: https://towardsdatascience.com/canny-edge-detection-step-by-step-in-python-computer-vision-b49c3a2d8123?gi=88bcd6109bce. This code is not ready for production, and it was not intended to be. I've always wanted to try interacting with the GPU using C++, but never had the opportunity. Now I do :)
+This is a project that implements a high resolution(5000x5000 pixels and more) image processing tool that uses CUDA to process images. Here you can find basic image filters such as grayscale, sepia, binary, etc. The most interesting part was the implementation of the Canny edge detection algorithm and Gaussian blur, here is an article on this topic: https://towardsdatascience.com/canny-edge-detection-step-by-step-in-python-computer-vision-b49c3a2d8123?gi=88bcd6109bce. This code is not ready for production, and it was not intended to be. I've always wanted to try interacting with the GPU using C++, but never had the opportunity. Now I do :)
 
 # Project setup:
 1. install CUDA, cuDNN and OpencCV
